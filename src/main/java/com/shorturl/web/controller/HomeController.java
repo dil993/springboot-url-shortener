@@ -1,6 +1,7 @@
 package com.shorturl.web.controller;
 
 
+import com.shorturl.ApplicationProperties;
 import com.shorturl.domain.entities.ShortUrl;
 import com.shorturl.domain.model.CreateShortUrlCmd;
 import com.shorturl.domain.service.ShortUrlService;
@@ -21,8 +22,11 @@ public class HomeController {
 
     private final ShortUrlService shortUrlService;
 
-    public HomeController(ShortUrlService shortUrlService) {
+    private final ApplicationProperties properties;
+
+    public HomeController(ShortUrlService shortUrlService, ApplicationProperties properties) {
         this.shortUrlService = shortUrlService;
+        this.properties = properties;
     }
 
     @GetMapping("/home")
@@ -30,7 +34,7 @@ public class HomeController {
 
         List<ShortUrl> shortUrls = shortUrlService.findPublicShortUrls();
         model.addAttribute("shortUrls", shortUrls);
-        model.addAttribute("baseUrl", "http://localhost:8080/");
+        model.addAttribute("baseUrl", properties.baseUrl());
         model.addAttribute("createShortUrlForm", new CreateSHortUrlForm(""));
         return "index";
     }
@@ -44,17 +48,17 @@ public class HomeController {
         if (bindingResult.hasErrors()) {
             List<ShortUrl> shortUrls = shortUrlService.findPublicShortUrls();
             model.addAttribute("shortUrls", shortUrls);
-            model.addAttribute("baseUrl", "http://localhost:8080/");
+            model.addAttribute("baseUrl", properties.baseUrl());
             return "index";
         }
         try{
             CreateShortUrlCmd createShortUrlCmd = new CreateShortUrlCmd(createSHortUrlForm.originalUrl());
             var shortUrl = shortUrlService.createShortUrl(createShortUrlCmd);
             redirectAttributes.addFlashAttribute("successMessage", "Short url created."+
-                    "http://localhost:8080/"+shortUrl.shortKey());
+                   properties.baseUrl()+shortUrl.shortKey());
 
         }catch (Exception e){
-            model.addAttribute("errorMessage", "Url is required.");
+            redirectAttributes.addFlashAttribute("errorMessage", "Url is required.");
         }
       return "redirect:/home";
     }
