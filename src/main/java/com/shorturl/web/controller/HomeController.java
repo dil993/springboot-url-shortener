@@ -33,7 +33,7 @@ public class HomeController {
         this.properties = properties;
     }
 
-    @GetMapping("/home")
+    @GetMapping("/")
     public String home(Model model) {
 
         List<ShortUrl> shortUrls = shortUrlService.findPublicShortUrls();
@@ -77,5 +77,10 @@ public class HomeController {
         }
         String originalUrl = shortUrlOptional.get().originalUrl();
         return "redirect:"+originalUrl;
+    }
+
+    @GetMapping("/login")
+    public String login() {
+        return "login";
     }
 }
