@@ -26,7 +26,7 @@ public class ShortUrl {
     @Column(name = "expires_at")
     private Instant expiresAt;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "created_by")
     private User createdBy;
 
